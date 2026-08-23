@@ -3,7 +3,7 @@ version: "3.8"
 services:
 
   frontend:
-    image: bathri98/contact-frontend:latest
+    image: bathri98/contact-frontend:${BUILD_NUMBER}
     ports:
       - "8081:80"
     networks:
@@ -14,7 +14,7 @@ services:
         condition: on-failure
 
   backend:
-    image: bathri98/contact-backend:latest
+    image: bathri98/contact-backend:${BUILD_NUMBER}
     environment:
       DB_HOST: database
       DB_USER: root
