@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+
+  frontend:
+    image: bathri98/contact-frontend:latest
+    ports:
+      - "8081:80"
+    networks:
+      - contact-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  backend:
+    image: bathri98/contact-backend:latest
+    environment:
+      DB_HOST: database
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: contactdb
+      DB_PORT: 3306
+      PORT: 5000
+    networks:
+      - contact-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: contactdb
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - contact-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  contact-network:
+    driver: overlay
+
+volumes:
+  mysql-data:
