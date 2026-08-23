@@ -12,14 +12,20 @@ function App() {
 
   const [message, setMessage] = useState("");
 
+  // Fetch all contacts
   const fetchContacts = async () => {
     try {
       const response = await fetch("/api/contacts");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch contacts");
+      }
+
       const data = await response.json();
 
       setContacts(data);
     } catch (error) {
-      console.error(error);
+      console.error("Fetch contacts error:", error);
       setMessage("Unable to connect to backend");
     }
   };
@@ -28,6 +34,7 @@ function App() {
     fetchContacts();
   }, []);
 
+  // Handle input changes
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -37,6 +44,7 @@ function App() {
     });
   };
 
+  // Add a new contact
   const addContact = async (event) => {
     event.preventDefault();
 
@@ -71,23 +79,30 @@ function App() {
 
       fetchContacts();
     } catch (error) {
-      console.error(error);
+      console.error("Add contact error:", error);
       setMessage("Unable to connect to backend");
     }
   };
 
+  // Delete a contact
   const deleteContact = async (id) => {
     try {
       const response = await fetch(`/api/contacts/${id}`, {
         method: "DELETE"
       });
 
-      if (response.ok) {
-        setMessage("Contact deleted successfully!");
-        fetchContacts();
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.message || "Failed to delete contact");
+        return;
       }
+
+      setMessage("Contact deleted successfully!");
+
+      fetchContacts();
     } catch (error) {
-      console.error(error);
+      console.error("Delete contact error:", error);
       setMessage("Unable to delete contact");
     }
   };
