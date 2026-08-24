@@ -5,7 +5,7 @@ function App() {
   const [contacts, setContacts] = useState([]);
 
   const [form, setForm] = useState({
-    name: "",
+    NAME: "",
     email: "",
     phone: ""
   });
